@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel do Cardápio</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --creme:#fdf8f3; --rosa:#f7e4e8; --rosa-forte:#d98a9e;
+  --dourado:#c9a96e; --dourado-escuro:#a8843f; --chocolate:#4a2c2a;
+  --texto:#4a3b3b; --cinza:#8a7373; --borda:#ecdfe0; --branco:#fff;
+  --verde:#2e9e6b; --vermelho:#c0392b; --sombra:0 2px 12px rgba(74,44,42,.07);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Poppins',sans-serif; background:var(--creme); color:var(--texto); font-size:15px; }
+button { font-family:inherit; cursor:pointer; }
+input, select, textarea { font-family:inherit; font-size:15px; }
+
+/* ===== LOGIN ===== */
+.login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+.login-box { background:var(--branco); padding:38px 30px; border-radius:20px; box-shadow:var(--sombra); width:100%; max-width:380px; }
+.login-box h1 { font-size:1.35rem; color:var(--chocolate); text-align:center; margin-bottom:6px; }
+.login-box p.sub { text-align:center; color:var(--cinza); font-size:.85rem; margin-bottom:26px; font-weight:300; }
+.campo { margin-bottom:16px; }
+.campo label { display:block; font-size:.8rem; font-weight:500; color:var(--cinza); margin-bottom:6px; }
+.campo input, .campo select, .campo textarea {
+  width:100%; padding:12px 14px; border:1px solid var(--borda); border-radius:10px;
+  background:var(--branco); color:var(--texto); outline:none; transition:.2s;
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus { border-color:var(--dourado); }
+.campo textarea { resize:vertical; min-height:80px; }
+.campo .ajuda { font-size:.75rem; color:#b0a0a0; margin-top:5px; font-weight:300; }
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 22px; border:none; border-radius:10px; font-weight:600; font-size:.92rem;
+  background:var(--dourado); color:#fff; transition:.2s;
+}
+.btn:hover { background:var(--dourado-escuro); }
+.btn.bloco { width:100%; }
+.btn.secundario { background:#f2eaea; color:var(--texto); }
+.btn.secundario:hover { background:#e8dcdc; }
+.btn.perigo { background:#fbe9e7; color:var(--vermelho); }
+.btn.perigo:hover { background:#f5d5d1; }
+.btn.mini { padding:7px 12px; font-size:.8rem; border-radius:8px; }
+.btn:disabled { opacity:.55; cursor:not-allowed; }
+
+/* ===== APP ===== */
+header.topo {
+  background:var(--branco); border-bottom:1px solid var(--borda);
+  padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+header.topo .titulo { font-weight:600; color:var(--chocolate); font-size:1rem; }
+header.topo .titulo small { display:block; font-weight:300; font-size:.72rem; color:var(--cinza); }
+header.topo .acoes { display:flex; gap:8px; align-items:center; }
+
+nav.abas {
+  display:flex; gap:4px; padding:0 12px; background:var(--branco);
+  border-bottom:1px solid var(--borda); overflow-x:auto; position:sticky; top:57px; z-index:49;
+}
+nav.abas button {
+  background:none; border:none; padding:14px 16px; font-size:.88rem; font-weight:500;
+  color:var(--cinza); border-bottom:2px solid transparent; white-space:nowrap;
+}
+nav.abas button.ativo { color:var(--chocolate); border-bottom-color:var(--dourado); font-weight:600; }
+
+main { padding:20px; max-width:900px; margin:0 auto; padding-bottom:90px; }
+.aba { display:none; }
+.aba.ativa { display:block; }
+h2.secao { font-size:1.05rem; color:var(--chocolate); margin-bottom:4px; }
+p.secao-sub { font-size:.83rem; color:var(--cinza); font-weight:300; margin-bottom:18px; }
+
+/* ===== LISTA DE PRODUTOS ===== */
+.lista-produtos { display:flex; flex-direction:column; gap:10px; }
+.item-produto {
+  background:var(--branco); border-radius:14px; padding:12px; display:flex; gap:12px;
+  align-items:center; box-shadow:var(--sombra); border:1px solid transparent;
+}
+.item-produto.indisponivel { opacity:.55; }
+.item-produto .thumb {
+  width:62px; height:62px; border-radius:10px; object-fit:cover; flex-shrink:0;
+  background:var(--rosa);
+}
+.item-produto .dados { flex:1; min-width:0; }
+.item-produto .dados h3 { font-size:.95rem; font-weight:600; color:var(--chocolate); }
+.item-produto .dados .meta { font-size:.78rem; color:var(--cinza); font-weight:300; margin-top:2px; }
+.item-produto .dados .tag-mini {
+  display:inline-block; background:var(--rosa); color:var(--dourado-escuro);
+  font-size:.65rem; font-weight:600; padding:2px 8px; border-radius:20px; margin-left:6px;
+  text-transform:uppercase; letter-spacing:.04em;
+}
+.item-produto .botoes { display:flex; gap:6px; flex-shrink:0; }
+.item-produto .botoes button {
+  width:34px; height:34px; border-radius:9px; border:1px solid var(--borda);
+  background:var(--branco); color:var(--cinza); display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; transition:.2s;
+}
+.item-produto .botoes button:hover { background:var(--creme); color:var(--chocolate); }
+.item-produto .botoes button.apagar:hover { background:#fbe9e7; color:var(--vermelho); border-color:#f5d5d1; }
+
+.vazio { text-align:center; padding:50px 20px; color:#b59a9a; font-weight:300; background:var(--branco); border-radius:14px; }
+.vazio i { font-size:2rem; display:block; margin-bottom:12px; opacity:.4; }
+
+/* ===== CARD ===== */
+.card { background:var(--branco); border-radius:14px; padding:20px; box-shadow:var(--sombra); margin-bottom:16px; }
+.card h3 { font-size:.95rem; color:var(--chocolate); margin-bottom:14px; font-weight:600; }
+
+/* ===== LISTA CATEGORIAS ===== */
+.item-cat {
+  display:flex; align-items:center; gap:10px; padding:11px 12px; background:var(--branco);
+  border-radius:12px; box-shadow:var(--sombra); margin-bottom:8px;
+}
+.item-cat .nome { flex:1; font-weight:500; }
+.item-cat .contagem { font-size:.78rem; color:var(--cinza); font-weight:300; }
+
+/* ===== MODAL ===== */
+.overlay {
+  position:fixed; inset:0; background:rgba(74,44,42,.55); z-index:200;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.overlay.aberto { display:flex; }
+.modal {
+  background:var(--branco); width:100%; max-width:560px; border-radius:20px 20px 0 0;
+  max-height:92vh; display:flex; flex-direction:column;
+}
+.modal-topo {
+  padding:18px 22px 12px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--borda);
+}
+.modal-topo h3 { font-size:1.05rem; color:var(--chocolate); }
+.modal-topo button { background:#f6eded; border:none; width:34px; height:34px; border-radius:50%; font-size:1rem; color:var(--texto); }
+.modal-corpo { padding:20px 22px; overflow-y:auto; flex:1; }
+.modal-rodape { padding:14px 22px 22px; border-top:1px solid var(--borda); display:flex; gap:10px; }
+.modal-rodape .btn { flex:1; }
+
+.linha-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:520px) { .linha-2 { grid-template-columns:1fr; } }
+
+/* ===== UPLOAD DE IMAGEM ===== */
+.upload-area {
+  border:2px dashed var(--borda); border-radius:12px; padding:18px; text-align:center;
+  cursor:pointer; transition:.2s; background:var(--creme);
+}
+.upload-area:hover { border-color:var(--dourado); }
+.upload-area .prev { width:100%; max-height:280px; object-fit:contain; border-radius:10px; margin-bottom:10px; background:#f7f1ec; }
+.upload-area p { font-size:.82rem; color:var(--cinza); font-weight:300; }
+.upload-area p strong { color:var(--dourado-escuro); font-weight:600; }
+
+/* ===== CORES DO SITE ===== */
+.paletas { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.paleta { display:flex; align-items:center; gap:7px; padding:7px 11px; border:1px solid var(--borda); border-radius:30px; background:var(--branco); font-size:.78rem; color:var(--texto); }
+.paleta:hover { border-color:var(--dourado); }
+.paleta .pontos { display:flex; }
+.paleta .ponto { width:13px; height:13px; border-radius:50%; border:1px solid rgba(0,0,0,.12); }
+.paleta .ponto + .ponto { margin-left:-4px; }
+
+.cores-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.cor-campo { display:flex; align-items:center; gap:11px; padding:11px; border:1px solid var(--borda); border-radius:11px; background:var(--branco); }
+.cor-campo input[type=color] { width:46px; height:46px; padding:0; border:1px solid var(--borda); border-radius:9px; background:none; cursor:pointer; flex-shrink:0; }
+.cor-campo input[type=color]::-webkit-color-swatch-wrapper { padding:3px; }
+.cor-campo input[type=color]::-webkit-color-swatch { border:none; border-radius:6px; }
+.cor-campo .txt { min-width:0; }
+.cor-campo label { display:block; font-size:.86rem; font-weight:600; color:var(--chocolate); }
+.cor-campo small { display:block; font-size:.72rem; color:var(--cinza); font-weight:300; line-height:1.35; }
+@media (max-width:560px) { .cores-grid { grid-template-columns:1fr; } }
+
+.previa-site { border:1px solid var(--borda); border-radius:12px; overflow:hidden; }
+.previa-site .pv-topo { padding:14px; text-align:center; }
+.previa-site .pv-nome { font-family:'Great Vibes',cursive; font-size:1.5rem; line-height:1.1; }
+.previa-site .pv-sub { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; margin-top:4px; opacity:.85; }
+.previa-site .pv-corpo { padding:14px; }
+.previa-site .pv-titulo { font-size:1rem; font-weight:600; }
+.previa-site .pv-linha { width:44px; height:1px; margin:8px 0; }
+.previa-site .pv-card { padding:10px; border-radius:9px; display:flex; gap:10px; align-items:center; margin-top:10px; }
+.previa-site .pv-thumb { width:40px; height:40px; border-radius:8px; flex-shrink:0; }
+.previa-site .pv-info { min-width:0; }
+.previa-site .pv-item { font-size:.82rem; font-weight:600; }
+.previa-site .pv-preco { font-weight:600; font-size:.88rem; margin-top:2px; }
+.previa-site .pv-btn { display:inline-block; padding:8px 16px; border-radius:22px; color:#fff; font-size:.76rem; margin-top:12px; }
+
+/* ===== TOGGLE ===== */
+.switch { display:flex; align-items:center; gap:10px; font-size:.88rem; }
+.switch input { width:auto; }
+
+/* ===== EDITOR DE ETAPAS (monte seu bolo) ===== */
+.item-etapa {
+  border:1px solid var(--borda); border-radius:12px; padding:13px 14px;
+  margin-bottom:9px; background:var(--creme);
+}
+.item-etapa .cab { display:flex; align-items:center; gap:10px; }
+.item-etapa .cab .n {
+  background:var(--dourado); color:#fff; font-size:.7rem; font-weight:700;
+  width:20px; height:20px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+.item-etapa .cab .t { flex:1; font-weight:600; font-size:.9rem; color:var(--chocolate); }
+.item-etapa .meta { font-size:.74rem; color:var(--cinza); font-weight:300; margin:5px 0 0 30px; }
+.item-etapa .acoes { display:flex; gap:5px; flex-shrink:0; }
+.item-etapa .acoes button {
+  width:30px; height:30px; border-radius:8px; border:1px solid var(--borda);
+  background:#fff; cursor:pointer; font-size:.78rem; color:var(--cinza);
+}
+.item-etapa .acoes button:hover { background:#fff; color:var(--chocolate); }
+.item-etapa .acoes button.apagar:hover { color:var(--vermelho); background:#fbe9e7; }
+
+.op-linha {
+  display:grid; grid-template-columns:1fr 88px 1fr auto; gap:7px;
+  align-items:center; margin-bottom:7px;
+}
+.op-linha input {
+  padding:9px 10px; border:1px solid var(--borda); border-radius:8px;
+  font-size:.83rem; outline:none; width:100%; background:#fff;
+}
+.op-linha input:focus { border-color:var(--dourado); }
+.op-linha .btns { display:flex; gap:4px; }
+.op-linha .btns button {
+  width:27px; height:27px; border-radius:7px; border:1px solid var(--borda);
+  background:#fff; cursor:pointer; font-size:.72rem; color:var(--cinza);
+}
+.op-linha .btns button:hover { color:var(--chocolate); }
+@media (max-width:620px) {
+  .op-linha { grid-template-columns:1fr auto; }
+  .op-linha input:nth-child(3) { grid-column:1 / -1; }
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(30px);
+  background:var(--chocolate); color:#fff; padding:13px 24px; border-radius:50px;
+  font-size:.87rem; z-index:300; opacity:0; pointer-events:none; transition:all .3s;
+  box-shadow:0 8px 26px rgba(0,0,0,.25); max-width:90vw; text-align:center;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.erro { background:var(--vermelho); }
+.toast.ok { background:var(--verde); }
+
+/* ===== BARRA SALVAR FIXA ===== */
+.barra-salvar {
+  position:fixed; bottom:0; left:0; right:0; background:var(--branco);
+  border-top:1px solid var(--borda); padding:13px 20px calc(13px + env(safe-area-inset-bottom));
+  display:none; align-items:center; justify-content:space-between; gap:14px; z-index:60;
+  box-shadow:0 -4px 22px rgba(74,44,42,.12);
+}
+.barra-salvar.visivel { display:flex; }
+.barra-salvar .aviso-pendente {
+  font-size:.82rem; color:var(--dourado-escuro); font-weight:500;
+  display:flex; align-items:center; gap:8px;
+}
+.barra-salvar .aviso-pendente i { font-size:.9rem; }
+.barra-salvar .btn { flex-shrink:0; }
+@media (max-width:520px) {
+  .barra-salvar .aviso-pendente span { display:none; }
+}
+
+.escondido { display:none !important; }
+.carregando-txt { text-align:center; padding:40px; color:#b59a9a; font-weight:300; }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-wrap" id="telaLogin">
+  <div class="login-box">
+    <h1>Painel do Cardápio</h1>
+    <p class="sub">Entre para editar seu cardápio</p>
+    <form onsubmit="entrar(event)">
+      <div class="campo">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" autocomplete="username" autocapitalize="none" required>
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn bloco" id="btnEntrar">Entrar</button>
+    </form>
+    <p class="ajuda" id="msgLogin" style="text-align:center;color:#c0392b;margin-top:14px;font-size:.83rem;"></p>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="escondido">
+  <header class="topo">
+    <div class="titulo" id="nomeLoja">Cardápio<small>painel de edição</small></div>
+    <div class="acoes">
+      <span id="statusSalvar" style="font-size:.76rem;color:#2e9e6b;font-weight:500;white-space:nowrap;"></span>
+      <a class="btn secundario mini" id="linkSite" href="/" target="_blank" rel="noopener">Ver site</a>
+      <button class="btn secundario mini" onclick="sair()">Sair</button>
+    </div>
+  </header>
+
+  <nav class="abas">
+    <button class="ativo" onclick="trocarAba('produtos', this)">Produtos</button>
+    <button onclick="trocarAba('categorias', this)">Categorias</button>
+    <button onclick="trocarAba('bolo', this)">Monte seu Bolo</button>
+    <button onclick="trocarAba('loja', this)">A loja</button>
+    <button onclick="trocarAba('conta', this)">Conta</button>
+  </nav>
+
+  <main>
+    <!-- PRODUTOS -->
+    <section class="aba ativa" id="aba-produtos">
+      <h2 class="secao">Seus produtos</h2>
+      <p class="secao-sub">Adicione, edite, reordene ou esconda itens do cardápio.</p>
+      <button class="btn" style="margin-bottom:16px;" onclick="abrirProduto(null)">+ Adicionar produto</button>
+      <div class="lista-produtos" id="listaProdutos"><div class="carregando-txt">Carregando…</div></div>
+    </section>
+
+    <!-- CATEGORIAS -->
+    <section class="aba" id="aba-categorias">
+      <h2 class="secao">Categorias</h2>
+      <p class="secao-sub">As abas que aparecem em cima do cardápio. A ordem aqui é a ordem no site.</p>
+      <div class="card">
+        <div class="linha-2">
+          <div class="campo" style="margin:0;">
+            <label for="novaCat">Nova categoria</label>
+            <input type="text" id="novaCat" placeholder="Ex: Salgados" onkeydown="if(event.key==='Enter'){event.preventDefault();criarCategoria();}">
+          </div>
+          <div class="campo" style="margin:0;display:flex;align-items:flex-end;">
+            <button class="btn bloco" onclick="criarCategoria()">Adicionar</button>
+          </div>
+        </div>
+      </div>
+      <div id="listaCategorias"></div>
+    </section>
+
+    <!-- MONTE SEU BOLO -->
+    <section class="aba" id="aba-bolo">
+      <h2 class="secao">Monte seu Bolo</h2>
+      <p class="secao-sub">O cliente monta o bolo escolhendo as opções, e o preço vai somando. Aqui você define quais são as opções e quanto cada uma custa.</p>
+
+      <div class="card">
+        <div class="switch">
+          <input type="checkbox" id="boloAtivo" data-bolo="ativo">
+          <label for="boloAtivo"><strong>Mostrar "Monte seu Bolo" no cardápio</strong></label>
+        </div>
+        <div class="ajuda" style="margin-left:30px;">Desligado, esse bloco desaparece do site.</div>
+      </div>
+
+      <div class="card">
+        <h3>Apresentação</h3>
+        <div class="campo"><label for="boloTitulo">Título</label><input type="text" id="boloTitulo" data-bolo="titulo"></div>
+        <div class="campo"><label for="boloSub">Subtítulo</label><input type="text" id="boloSub" data-bolo="subtitulo"></div>
+        <div class="campo"><label for="boloTexto">Texto de introdução</label><textarea id="boloTexto" data-bolo="texto" rows="3"></textarea></div>
+        <div class="campo">
+          <label>Foto</label>
+          <div class="upload-area" id="areaBolo" onclick="document.getElementById('fileBolo').click()">
+            <img class="prev escondido" id="prevBolo">
+            <p><strong>Clique para escolher uma foto</strong><br>Sugestão: um bolo bonito, montado</p>
+          </div>
+          <input type="file" id="fileBolo" accept="image/*" class="escondido" onchange="enviarImagem(this,'boloImg','prevBolo')">
+          <input type="hidden" id="boloImg" data-bolo="img">
+        </div>
+        <div class="linha-2">
+          <div class="campo">
+            <label for="boloBase">Preço base (R$)</label>
+            <input type="text" id="boloBase" inputmode="decimal" placeholder="0">
+            <div class="ajuda">Deixe 0 se cada tamanho já tem o preço completo nas opções.</div>
+          </div>
+          <div class="campo">
+            <label for="boloPrazo">Antecedência (dias)</label>
+            <input type="number" id="boloPrazo" min="0" data-bolo="prazoDias">
+            <div class="ajuda">O site só deixa escolher data a partir daí.</div>
+          </div>
+        </div>
+        <div class="campo"><label for="boloAviso">Aviso extra</label><input type="text" id="boloAviso" data-bolo="prazoAviso" placeholder="Ex: para bolos acima de 2 kg, pedir com 2 dias"></div>
+      </div>
+
+      <div class="card">
+        <h3>Etapas da montagem</h3>
+        <p class="ajuda" style="margin-bottom:14px;">Cada etapa é uma pergunta para o cliente. A ordem aqui é a ordem que ele vê no site.</p>
+        <div id="listaEtapas"></div>
+        <button class="btn" style="margin-top:6px;" onclick="abrirEtapa(null)">+ Adicionar etapa</button>
+      </div>
+    </section>
+
+    <!-- LOJA -->
+    <section class="aba" id="aba-loja">
+      <h2 class="secao">Dados da loja</h2>
+      <p class="secao-sub">Textos, contatos e imagens do site.</p>
+
+      <div class="card">
+        <h3>Identidade</h3>
+        <div class="campo"><label for="cfgNome">Nome da loja</label><input type="text" id="cfgNome" data-cfg="nome"></div>
+        <div class="campo"><label for="cfgSlogan">Subtítulo</label><input type="text" id="cfgSlogan" data-cfg="slogan" placeholder="Ex: Confeitaria Artesanal"></div>
+        <div class="campo"><label for="cfgDesc">Frase de destaque</label><textarea id="cfgDesc" data-cfg="descricao" rows="2"></textarea></div>
+        <div class="campo">
+          <label>Foto ou logo do topo do site</label>
+          <div class="upload-area" id="areaHero" onclick="document.getElementById('fileHero').click()">
+            <img class="prev escondido" id="prevHero">
+            <p><strong>Clique para escolher uma foto</strong><br>JPG ou PNG, do celular ou do computador</p>
+          </div>
+          <input type="file" id="fileHero" accept="image/*" class="escondido" onchange="enviarImagem(this,'heroImg','prevHero')">
+          <input type="hidden" id="cfgHeroImg" data-cfg="heroImg">
+        </div>
+        <div class="campo">
+          <label for="cfgCapaAjuste">Como mostrar no topo</label>
+          <select id="cfgCapaAjuste" data-cfg="capaAjuste">
+            <option value="preencher">Foto de fundo — preenche a tela (corta as bordas)</option>
+            <option value="inteira">Foto de fundo — mostra a foto inteira</option>
+            <option value="logo">Logo da marca — aparece inteiro, sem cortar</option>
+          </select>
+          <div class="ajuda">Se você enviou o <strong>logo</strong> da sua marca, escolha "Logo da marca". Se enviou uma <strong>foto</strong> (bolo, mesa, loja), escolha uma das duas primeiras.</div>
+        </div>
+        <div class="campo">
+          <label for="cfgAviso">Aviso no topo do site</label>
+          <input type="text" id="cfgAviso" data-cfg="aviso" placeholder="Ex: Não abrimos no feriado de 7 de setembro">
+          <div class="ajuda">Deixe vazio para não mostrar aviso nenhum.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Cores do site</h3>
+        <p class="ajuda" style="margin-bottom:15px;">Escolha as cores da sua marca. Elas mudam os botões, os títulos e o fundo do site.</p>
+
+        <div class="campo">
+          <label>Paletas prontas</label>
+          <div class="paletas" id="paletas"></div>
+          <div class="ajuda">Toque numa paleta para aplicar as quatro cores de uma vez. Depois ajuste o que quiser e clique em "Salvar alterações".</div>
+        </div>
+
+        <div class="cores-grid" style="margin-top:16px;">
+          <div class="cor-campo">
+            <input type="color" id="corDestaque" data-cfg="corDestaque" value="#c9a96e">
+            <div class="txt">
+              <label for="corDestaque">Destaque</label>
+              <small>Botões, preços e divisórias</small>
+            </div>
+          </div>
+          <div class="cor-campo">
+            <input type="color" id="corTitulos" data-cfg="corTitulos" value="#4a2c2a">
+            <div class="txt">
+              <label for="corTitulos">Títulos</label>
+              <small>Nome da loja, títulos e rodapé</small>
+            </div>
+          </div>
+          <div class="cor-campo">
+            <input type="color" id="corDetalhes" data-cfg="corDetalhes" value="#d98a9e">
+            <div class="txt">
+              <label for="corDetalhes">Detalhes</label>
+              <small>Textos cursivos e selos</small>
+            </div>
+          </div>
+          <div class="cor-campo">
+            <input type="color" id="corFundo" data-cfg="corFundo" value="#fdf8f3">
+            <div class="txt">
+              <label for="corFundo">Fundo</label>
+              <small>Cor de fundo do site</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="campo" style="margin-top:16px;">
+          <label>Prévia</label>
+          <div class="previa-site" id="previaSite">
+            <div class="pv-topo">
+              <div class="pv-nome" id="pvNome">Minha Confeitaria</div>
+              <div class="pv-sub" id="pvSlogan">Confeitaria Artesanal</div>
+            </div>
+            <div class="pv-corpo">
+              <div class="pv-titulo" id="pvTitulo">Nossos doces</div>
+              <div class="pv-linha" id="pvLinha"></div>
+              <div class="pv-card" id="pvCard">
+                <div class="pv-thumb" id="pvThumb"></div>
+                <div class="pv-info">
+                  <div class="pv-item" id="pvItem">Brigadeiro Gourmet</div>
+                  <div class="pv-preco" id="pvPreco">R$ 4,50</div>
+                </div>
+              </div>
+              <div class="pv-btn" id="pvBtn">Ver o cardápio</div>
+            </div>
+          </div>
+          <div class="ajuda">É só uma ideia de como fica. O site de verdade pode ter diferenças.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Contato</h3>
+        <div class="campo">
+          <label for="cfgZap">WhatsApp</label>
+          <input type="text" id="cfgZap" data-cfg="whatsapp" inputmode="numeric" placeholder="5561999999999">
+          <div class="ajuda">Só números: código do país + DDD + número. Ex: 55 61 99999-9999 → 5561999999999</div>
+        </div>
+        <div class="campo">
+          <label for="cfgInsta">Instagram</label>
+          <input type="text" id="cfgInsta" data-cfg="instagram" placeholder="minhaloja">
+          <div class="ajuda">Só o @, sem o link.</div>
+        </div>
+        <div class="campo">
+          <label for="cfgMsg">Primeira linha da mensagem do pedido</label>
+          <input type="text" id="cfgMsg" data-cfg="msgPedido">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Seção "Nossa história"</h3>
+        <div class="campo"><label for="cfgSobreTitulo">Título</label><input type="text" id="cfgSobreTitulo" data-cfg="sobreTitulo"></div>
+        <div class="campo"><label for="cfgSobreScript">Frase em destaque</label><input type="text" id="cfgSobreScript" data-cfg="sobreScript"></div>
+        <div class="campo"><label for="cfgSobreTexto">Texto</label><textarea id="cfgSobreTexto" data-cfg="sobreTexto" rows="5"></textarea><div class="ajuda">Deixe uma linha em branco para separar parágrafos.</div></div>
+        <div class="campo">
+          <label>Foto da seção</label>
+          <div class="upload-area" id="areaSobre" onclick="document.getElementById('fileSobre').click()">
+            <img class="prev escondido" id="prevSobre">
+            <p><strong>Clique para escolher uma foto</strong></p>
+          </div>
+          <input type="file" id="fileSobre" accept="image/*" class="escondido" onchange="enviarImagem(this,'sobreImg','prevSobre')">
+          <input type="hidden" id="cfgSobreImg" data-cfg="sobreImg">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Rodapé</h3>
+        <div class="campo"><label for="cfgRodape">Frase do rodapé</label><input type="text" id="cfgRodape" data-cfg="rodape" placeholder="Confeitaria artesanal • Feito com amor"></div>
+        <div class="switch">
+          <input type="checkbox" id="cfgPrecos" data-cfg="mostrarPrecos">
+          <label for="cfgPrecos">Mostrar preços no site</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Backup</h3>
+        <p class="secao-sub" style="margin-bottom:12px;">Baixe uma cópia de tudo (produtos, textos e categorias). Guarde em lugar seguro.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn secundario" onclick="exportar()">Baixar backup</button>
+          <button class="btn secundario" onclick="document.getElementById('fileImport').click()">Restaurar backup</button>
+          <input type="file" id="fileImport" accept="application/json,.json" class="escondido" onchange="importar(this)">
+        </div>
+        <div class="ajuda" style="margin-top:10px;">As fotos não entram nesse arquivo — elas ficam no servidor e são copiadas junto no backup da VPS.</div>
+      </div>
+    </section>
+
+    <!-- CONTA -->
+    <section class="aba" id="aba-conta">
+      <h2 class="secao">Sua conta</h2>
+      <p class="secao-sub">Usuário: <strong id="usuarioAtual"></strong></p>
+      <div class="card">
+        <h3>Trocar a senha</h3>
+        <div class="campo"><label for="senhaAtual">Senha atual</label><input type="password" id="senhaAtual" autocomplete="current-password"></div>
+        <div class="campo"><label for="senhaNova">Senha nova</label><input type="password" id="senhaNova" autocomplete="new-password"><div class="ajuda">Mínimo de 8 caracteres.</div></div>
+        <div class="campo"><label for="senhaNova2">Repita a senha nova</label><input type="password" id="senhaNova2" autocomplete="new-password"></div>
+        <button class="btn" onclick="trocarSenha()">Salvar nova senha</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ MODAL PRODUTO ============ -->
+<div class="overlay" id="overlayModal">
+  <div class="modal">
+    <div class="modal-topo">
+      <h3 id="modalTitulo">Produto</h3>
+      <button onclick="fecharModal()">✕</button>
+    </div>
+    <div class="modal-corpo">
+      <div class="campo">
+        <label>Foto do produto</label>
+        <div class="upload-area" id="areaProdImg" onclick="document.getElementById('fileProdImg').click()">
+          <img class="prev escondido" id="prevProdImg">
+          <p><strong>Clique para escolher uma foto</strong><br>JPG ou PNG</p>
+        </div>
+        <input type="file" id="fileProdImg" accept="image/*" class="escondido" onchange="enviarImagem(this,'pImg','prevProdImg')">
+        <input type="hidden" id="pImg">
+      </div>
+      <div class="campo"><label for="pNome">Nome *</label><input type="text" id="pNome" placeholder="Ex: Brigadeiro Gourmet"></div>
+      <div class="campo"><label for="pDesc">Descrição</label><textarea id="pDesc" rows="3" placeholder="Ex: Chocolate belga meio amargo, granulado fininho."></textarea></div>
+      <div class="linha-2">
+        <div class="campo"><label for="pPreco">Preço (R$)</label><input type="text" id="pPreco" inputmode="decimal" placeholder="3,50"></div>
+        <div class="campo"><label for="pUnid">Unidade</label><input type="text" id="pUnid" placeholder="unidade / fatia / pote 250ml"></div>
+      </div>
+      <div class="linha-2">
+        <div class="campo"><label for="pCat">Categoria</label><select id="pCat"></select></div>
+        <div class="campo"><label for="pTag">Selo</label><input type="text" id="pTag" placeholder="Ex: Mais pedido"></div>
+      </div>
+      <div class="switch">
+        <input type="checkbox" id="pDisp" checked>
+        <label for="pDisp">Mostrar no cardápio</label>
+      </div>
+    </div>
+    <div class="modal-rodape">
+      <button class="btn secundario" onclick="fecharModal()">Cancelar</button>
+      <button class="btn" id="btnSalvarProduto" onclick="salvarProduto()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL ETAPA (monte seu bolo) ============ -->
+<div class="overlay" id="overlayEtapa">
+  <div class="modal">
+    <div class="modal-topo">
+      <h3 id="etapaModalTitulo">Etapa</h3>
+      <button onclick="fecharEtapa()">✕</button>
+    </div>
+    <div class="modal-corpo">
+      <div class="campo"><label for="etTitulo">Título da etapa *</label><input type="text" id="etTitulo" placeholder="Ex: Escolha a massa"></div>
+      <div class="linha-2">
+        <div class="campo">
+          <label for="etTipo">Tipo de etapa</label>
+          <select id="etTipo" onchange="atualizarCamposEtapa()">
+            <option value="unico">Escolha única (radio)</option>
+            <option value="multiplo">Escolha múltipla (até N)</option>
+            <option value="texto">Campo de texto</option>
+            <option value="data">Data</option>
+          </select>
+        </div>
+        <div class="campo" id="campoEtMax" style="display:none;">
+          <label for="etMax">Máximo de escolhas</label>
+          <input type="number" min="1" id="etMax" value="1">
+        </div>
+      </div>
+      <div class="switch" style="margin-bottom:15px;">
+        <input type="checkbox" id="etObrig">
+        <label for="etObrig">Obrigatório (o cliente não consegue finalizar sem escolher)</label>
+      </div>
+      <div class="campo"><label for="etAjuda">Dica abaixo do título</label><input type="text" id="etAjuda" placeholder="Ex: você pode escolher dois para combinar"></div>
+      <div class="campo" id="campoEtPlaceholder" style="display:none;">
+        <label for="etPlaceholder">Texto de exemplo dentro do campo</label>
+        <input type="text" id="etPlaceholder" placeholder="Ex: rosa claro">
+      </div>
+
+      <div id="blocoEtOpcoes">
+        <label style="display:block;font-size:.8rem;font-weight:500;color:var(--cinza);margin-bottom:8px;">
+          Opções &nbsp;<span style="font-weight:300;">(nome · preço somado · descrição)</span>
+        </label>
+        <div id="listaOpcoesEtapa"></div>
+        <button class="btn secundario mini" style="margin-top:5px;" onclick="addOpcaoEtapa()">+ Adicionar opção</button>
+      </div>
+    </div>
+    <div class="modal-rodape">
+      <button class="btn secundario" onclick="fecharEtapa()">Cancelar</button>
+      <button class="btn" onclick="salvarEtapa()">Salvar etapa</button>
+    </div>
+  </div>
+</div>
+
+<!-- BARRA DE SALVAR -->
+<div class="barra-salvar" id="barraSalvar">
+  <div class="aviso-pendente">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <span>Você tem alterações não salvas</span>
+  </div>
+  <button class="btn" id="btnSalvarTudo" onclick="salvarAlteracoes()">
+    <i class="fa-solid fa-floppy-disk"></i> Salvar alterações
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="admin.js?v=2"></script>
+</body>
+</html>

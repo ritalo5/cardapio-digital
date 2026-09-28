@@ -1,0 +1,173 @@
+{
+  "config": {
+    "nome": "Minha Confeitaria",
+    "slogan": "Confeitaria Artesanal",
+    "descricao": "Doces feitos à mão, com ingredientes selecionados e muito carinho em cada detalhe.",
+    "whatsapp": "5561999999999",
+    "instagram": "minhaconfeitaria",
+    "heroImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1600&q=80&auto=format&fit=crop",
+    "sobreScript": "Feito com amor",
+    "sobreTitulo": "Nossa história",
+    "sobreTexto": "Cada doce que sai da nossa cozinha carrega uma história de dedicação. Trabalhamos com receitas artesanais, ingredientes de primeira qualidade e o capricho de quem ama o que faz.\n\nDos brigadeiros gourmet às tortas especiais, tudo é preparado no dia, fresquinho, pra adoçar o seu momento.",
+    "sobreImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80&auto=format&fit=crop",
+    "rodape": "Confeitaria artesanal • Feito com amor",
+    "msgPedido": "Olá! Gostei do produto:",
+    "aviso": "",
+    "mostrarPrecos": true,
+    "corDestaque": "#c9a96e",
+    "corTitulos": "#4a2c2a",
+    "corDetalhes": "#d98a9e",
+    "corFundo": "#fdf8f3",
+    "capaAjuste": "preencher"
+  },
+  "categorias": [
+    { "id": "especiais", "nome": "Especiais", "ordem": 1 },
+    { "id": "tradicionais", "nome": "Tradicionais", "ordem": 2 },
+    { "id": "bolos", "nome": "Bolos & Tortas", "ordem": 3 }
+  ],
+  "produtos": [
+    {
+      "id": "p1",
+      "nome": "Brigadeiro Gourmet",
+      "descricao": "Chocolate belga meio amargo, granulado fininho. Cremoso por dentro.",
+      "preco": 3.5,
+      "unidade": "unidade",
+      "categoria": "tradicionais",
+      "tag": "Mais pedido",
+      "img": "https://images.unsplash.com/photo-1587314168485-3236d6710814?w=600&q=80&auto=format&fit=crop",
+      "disponivel": true,
+      "ordem": 1
+    },
+    {
+      "id": "p2",
+      "nome": "Beijinho de Coco",
+      "descricao": "Coco fresco ralado, leite condensado cremoso e cravo pra finalizar.",
+      "preco": 3.5,
+      "unidade": "unidade",
+      "categoria": "tradicionais",
+      "tag": "",
+      "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&q=80&auto=format&fit=crop",
+      "disponivel": true,
+      "ordem": 2
+    },
+    {
+      "id": "p3",
+      "nome": "Casadinho",
+      "descricao": "A dupla clássica: brigadeiro e beijinho juntos no mesmo doce.",
+      "preco": 4,
+      "unidade": "unidade",
+      "categoria": "tradicionais",
+      "tag": "",
+      "img": "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=600&q=80&auto=format&fit=crop",
+      "disponivel": true,
+      "ordem": 3
+    },
+    {
+      "id": "p4",
+      "nome": "Cupcake Decorado",
+      "descricao": "Massa fofinha com buttercream decorado à mão.",
+      "preco": 9,
+      "unidade": "unidade",
+      "categoria": "especiais",
+      "tag": "Festa",
+      "img": "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=600&q=80&auto=format&fit=crop",
+      "disponivel": true,
+      "ordem": 4
+    }
+  ],
+  "bolo": {
+    "ativo": true,
+    "titulo": "Monte seu Bolo",
+    "subtitulo": "Escolha massa, recheio e cobertura do jeito que você quiser.",
+    "texto": "Basta escolher o tamanho, a massa, até 2 recheios e a cobertura. Preparamos tudo com muito cuidado para você receber o seu bolo do jeitinho que você quer.",
+    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80&auto=format&fit=crop",
+    "precoBase": 0,
+    "prazoDias": 2,
+    "prazoAviso": "Para bolos acima de 2 kg, recomendamos pedir com 2 dias de antecedência.",
+    "etapas": [
+      {
+        "id": "tamanho",
+        "titulo": "Quantos quilos?",
+        "tipo": "unico",
+        "obrigatorio": true,
+        "max": 1,
+        "ajuda": "",
+        "placeholder": "",
+        "opcoes": [
+          { "id": "t1", "nome": "1 kg", "preco": 120, "descricao": "serve aprox. 8 fatias" },
+          { "id": "t2", "nome": "1,5 kg", "preco": 165, "descricao": "serve aprox. 12 fatias" },
+          { "id": "t3", "nome": "2 kg", "preco": 210, "descricao": "serve aprox. 16 fatias" },
+          { "id": "t4", "nome": "3 kg", "preco": 300, "descricao": "serve aprox. 24 fatias" }
+        ]
+      },
+      {
+        "id": "massa",
+        "titulo": "Escolha a massa",
+        "tipo": "unico",
+        "obrigatorio": true,
+        "max": 1,
+        "ajuda": "",
+        "placeholder": "",
+        "opcoes": [
+          { "id": "m1", "nome": "Baunilha", "preco": 0, "descricao": "" },
+          { "id": "m2", "nome": "Chocolate", "preco": 0, "descricao": "" },
+          { "id": "m3", "nome": "Red Velvet", "preco": 0, "descricao": "" },
+          { "id": "m4", "nome": "Cenoura", "preco": 0, "descricao": "" },
+          { "id": "m5", "nome": "Limão Siciliano", "preco": 0, "descricao": "" }
+        ]
+      },
+      {
+        "id": "recheios",
+        "titulo": "Escolha até 2 recheios",
+        "tipo": "multiplo",
+        "obrigatorio": true,
+        "max": 2,
+        "ajuda": "Você pode escolher dois para combinar.",
+        "placeholder": "",
+        "opcoes": [
+          { "id": "r1", "nome": "Brigadeiro tradicional", "preco": 0, "descricao": "" },
+          { "id": "r2", "nome": "Brigadeiro de ninho", "preco": 0, "descricao": "" },
+          { "id": "r3", "nome": "Doce de leite", "preco": 0, "descricao": "" },
+          { "id": "r4", "nome": "Morango com chantilly", "preco": 15, "descricao": "" },
+          { "id": "r5", "nome": "Ganache meio amargo", "preco": 0, "descricao": "" },
+          { "id": "r6", "nome": "Frutas vermelhas", "preco": 20, "descricao": "" }
+        ]
+      },
+      {
+        "id": "cobertura",
+        "titulo": "Escolha a cobertura",
+        "tipo": "unico",
+        "obrigatorio": true,
+        "max": 1,
+        "ajuda": "",
+        "placeholder": "",
+        "opcoes": [
+          { "id": "c1", "nome": "Frosting de baunilha", "preco": 0, "descricao": "aceita cor" },
+          { "id": "c2", "nome": "Cream cheese", "preco": 0, "descricao": "" },
+          { "id": "c3", "nome": "Ganache meio amargo", "preco": 0, "descricao": "" },
+          { "id": "c4", "nome": "Chantilly", "preco": 0, "descricao": "" }
+        ]
+      },
+      {
+        "id": "cor",
+        "titulo": "Cor da cobertura",
+        "tipo": "texto",
+        "obrigatorio": false,
+        "max": 1,
+        "ajuda": "Só se você escolheu frosting de baunilha. Exceto preto e vermelho.",
+        "placeholder": "Ex: rosa claro",
+        "opcoes": []
+      },
+      {
+        "id": "data",
+        "titulo": "Data de entrega ou retirada",
+        "tipo": "data",
+        "obrigatorio": true,
+        "max": 1,
+        "ajuda": "",
+        "placeholder": "",
+        "opcoes": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "cardapio-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cardapio digital com painel de administracao",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "sharp": "^0.33.5"
+  }
+}

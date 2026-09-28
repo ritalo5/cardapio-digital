@@ -1,0 +1,22 @@
+# Dependências
+node_modules/
+
+# ============================================================
+# DADOS DO CLIENTE E SEGREDOS — nunca vão para o repositório
+# ============================================================
+# Catálogo real (nome, contatos, preços, produtos da loja)
+data/menu.json
+# Hash da senha do painel
+data/auth.json
+# Tokens de sessão ativos do painel
+data/sessions.json
+# Fotos enviadas pelo cliente (direito de imagem dele)
+data/uploads/
+# Histórico de versões do catálogo
+data/backups/
+
+# Ambiente e temporários
+.env
+*.tmp
+*.log
+.DS_Store

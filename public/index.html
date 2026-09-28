@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardápio</title>
+<meta name="description" content="Doces artesanais feitos com amor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --creme: #fdf8f3;
+  --rosa: #f7e4e8;
+  --rosa-forte: #d98a9e;
+  --dourado: #c9a96e;
+  --dourado-escuro: #a8843f;
+  --chocolate: #4a2c2a;
+  --texto: #4a3b3b;
+  --branco: #ffffff;
+  --borda: #ecdfe0;
+  --sombra: 0 4px 20px rgba(74,44,42,0.08);
+  --transition: all .3s ease;
+  /* Sombra do topo: recriada em JS quando o cliente troca as cores */
+  --hero-sombra-1: rgba(74,44,42,0.25);
+  --hero-sombra-2: rgba(74,44,42,0.45);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Poppins',sans-serif; background:var(--creme); color:var(--texto); }
+
+/* ===== HERO ===== */
+.hero {
+  position:relative; min-height:88vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; overflow:hidden; padding:20px;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:var(--chocolate) center/cover no-repeat;
+  filter:brightness(.75);
+}
+.hero::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, var(--hero-sombra-1) 0%, var(--hero-sombra-2) 55%, var(--creme) 100%);
+}
+
+/* ===== MODO LOGO =====
+   Um logo (imagem quadrada, com moldura e fundo próprio) não funciona como
+   foto de fundo: o "cover" corta as bordas. Neste modo ele aparece inteiro,
+   centralizado, sem escurecimento e sem gradiente, sobre fundo branco. */
+.hero-logo { display:none; }
+.hero.modo-logo {
+  min-height:auto; padding:34px 20px 44px; background:#fff;
+}
+.hero.modo-logo .hero-bg { display:none; }
+.hero.modo-logo::after { display:none; }
+.hero.modo-logo .hero-logo { display:block; width:100%; max-width:330px; margin:0 auto; }
+/* width:auto + max-width/max-height preserva a proporção. Com width:100% e um
+   max-height, a imagem é espremida quando o teto de altura entra em ação. */
+.hero.modo-logo .hero-logo img {
+  display:block; margin:0 auto; width:auto; height:auto;
+  max-width:100%; max-height:46vh; object-fit:contain;
+}
+.hero.modo-logo .hero-content { color:var(--chocolate); }
+/* O logo já traz o nome da marca — repetir em cursiva ficaria duplicado. */
+.hero.modo-logo .hero-content .script { display:none; }
+.hero.modo-logo .hero-content h1,
+.hero.modo-logo .hero-content p.sub { text-shadow:none; }
+.hero.modo-logo .hero-content h1 { margin-top:20px; }
+.hero-content { position:relative; z-index:2; color:#fff; max-width:640px; }
+.hero-content .script {
+  font-family:'Great Vibes',cursive; font-size:clamp(3rem,10vw,5.5rem);
+  line-height:1.1; text-shadow:0 2px 12px rgba(0,0,0,.35);
+}
+.hero-content h1 {
+  font-family:'Playfair Display',serif; font-size:clamp(1rem,3vw,1.4rem);
+  font-weight:400; letter-spacing:.35em; text-transform:uppercase; margin-top:8px;
+  text-shadow:0 1px 8px rgba(0,0,0,.4);
+}
+.hero-content p.sub {
+  margin-top:18px; font-weight:300; font-size:clamp(.9rem,2.5vw,1.05rem);
+  text-shadow:0 1px 6px rgba(0,0,0,.4);
+}
+.divisor {
+  width:70px; height:1px; background:var(--dourado); margin:22px auto;
+  position:relative;
+}
+.divisor::after {
+  content:'❦'; position:absolute; top:-11px; left:50%; transform:translateX(-50%);
+  background:transparent; color:var(--dourado); font-size:14px;
+  padding:0 8px;
+}
+.btn-scroll {
+  display:inline-flex; align-items:center; gap:10px; margin-top:26px;
+  background:var(--dourado); color:#fff; text-decoration:none;
+  padding:14px 34px; border-radius:50px; font-weight:500; font-size:.95rem;
+  letter-spacing:.05em; box-shadow:0 6px 24px rgba(201,169,110,.45);
+  transition:var(--transition);
+}
+.btn-scroll:hover { background:var(--dourado-escuro); transform:translateY(-2px); }
+
+/* ===== AVISO ===== */
+.aviso {
+  background:var(--chocolate); color:#fff; text-align:center;
+  padding:11px 20px; font-size:.86rem; font-weight:300; letter-spacing:.02em;
+}
+.aviso i { color:var(--dourado); margin-right:6px; }
+
+/* ===== HEADER FIXO ===== */
+.topbar {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(253,248,243,.92); backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(201,169,110,.25);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px; opacity:0; transform:translateY(-100%);
+  transition:var(--transition);
+}
+.topbar.show { opacity:1; transform:translateY(0); }
+.topbar .logo { font-family:'Great Vibes',cursive; font-size:1.7rem; color:var(--chocolate); }
+.topbar .icons { display:flex; gap:18px; align-items:center; }
+.icone-btn { position:relative; cursor:pointer; font-size:1.25rem; color:var(--chocolate); transition:var(--transition); }
+.icone-btn:hover { color:var(--dourado-escuro); }
+.icone-btn .badge {
+  position:absolute; top:-7px; right:-9px; background:var(--rosa-forte);
+  color:#fff; font-size:.6rem; font-weight:700; min-width:17px; height:17px;
+  border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0 4px;
+}
+
+/* ===== SEÇÕES ===== */
+section { padding:60px 20px; max-width:1100px; margin:0 auto; }
+.titulo-secao { text-align:center; margin-bottom:40px; }
+.titulo-secao .script { font-family:'Great Vibes',cursive; font-size:2.6rem; color:var(--rosa-forte); }
+.titulo-secao h2 {
+  font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:600;
+  letter-spacing:.3em; text-transform:uppercase; color:var(--chocolate); margin-top:4px;
+}
+.titulo-secao p { margin-top:10px; font-size:.92rem; color:#8a7373; font-weight:300; }
+
+/* ===== CATEGORIAS (tabs) ===== */
+.categorias {
+  display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:36px;
+}
+.cat-btn {
+  background:transparent; border:1px solid var(--dourado); color:var(--dourado-escuro);
+  padding:9px 24px; border-radius:50px; cursor:pointer; font-family:'Poppins';
+  font-size:.85rem; font-weight:500; transition:var(--transition);
+}
+.cat-btn.ativo, .cat-btn:hover { background:var(--dourado); color:#fff; }
+
+/* ===== GRID DE DOCES ===== */
+.grid-doces {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:24px;
+}
+.card-doce {
+  background:var(--branco); border-radius:16px; overflow:hidden;
+  box-shadow:var(--sombra); transition:var(--transition);
+  display:flex; flex-direction:column;
+}
+.card-doce:hover { transform:translateY(-6px); box-shadow:0 12px 32px rgba(74,44,42,.14); }
+.card-doce .foto { position:relative; height:200px; overflow:hidden; background:var(--rosa); }
+.card-doce .foto img { width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+.card-doce:hover .foto img { transform:scale(1.07); }
+.card-doce .tag {
+  position:absolute; top:12px; left:12px; background:rgba(255,255,255,.92);
+  color:var(--dourado-escuro); font-size:.68rem; font-weight:600;
+  padding:4px 12px; border-radius:50px; letter-spacing:.06em; text-transform:uppercase;
+}
+.card-doce .info { padding:18px; flex:1; display:flex; flex-direction:column; }
+.card-doce .info h3 {
+  font-family:'Playfair Display',serif; font-size:1.15rem; color:var(--chocolate);
+}
+.card-doce .info .desc {
+  font-size:.8rem; color:#9a8686; font-weight:300; margin-top:5px; flex:1;
+}
+.card-doce .rodape {
+  display:flex; align-items:center; justify-content:space-between; margin-top:14px;
+}
+.card-doce .preco {
+  font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700;
+  color:var(--dourado-escuro);
+}
+.card-doce .preco small { font-size:.7rem; font-weight:400; color:#9a8686; display:block; }
+.btn-add {
+  width:42px; height:42px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--rosa-forte); color:#fff; font-size:1.1rem;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(217,138,158,.4); transition:var(--transition);
+}
+.btn-add:hover { transform:scale(1.12); background:#c96f87; }
+.btn-add.added { background:#4caf7d; }
+
+/* ===== CARRINHO FLUTUANTE ===== */
+.btn-carrinho {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:var(--chocolate); color:#fff; border:none; cursor:pointer;
+  width:62px; height:62px; border-radius:50%; font-size:1.4rem;
+  box-shadow:0 8px 28px rgba(74,44,42,.4); transition:var(--transition);
+  display:flex; align-items:center; justify-content:center;
+}
+.btn-carrinho:hover { transform:scale(1.08); }
+.btn-carrinho .badge {
+  position:absolute; top:-4px; right:-4px; background:var(--rosa-forte);
+  color:#fff; font-size:.7rem; font-weight:700; min-width:22px; height:22px;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:2px solid var(--creme);
+}
+.btn-carrinho.escondido { transform:translateY(120px); opacity:0; pointer-events:none; }
+
+/* ===== OVERLAY CARRINHO ===== */
+.overlay {
+  position:fixed; inset:0; background:rgba(74,44,42,.5); z-index:300;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.overlay.aberto { opacity:1; pointer-events:auto; }
+.painel-carrinho {
+  position:fixed; bottom:0; left:0; right:0; z-index:301;
+  background:var(--branco); border-radius:24px 24px 0 0;
+  max-height:85vh; display:flex; flex-direction:column;
+  transform:translateY(100%); transition:transform .35s cubic-bezier(.4,0,.2,1);
+  max-width:520px; margin:0 auto;
+}
+.painel-carrinho.aberto { transform:translateY(0); }
+.painel-topo {
+  padding:20px 24px 14px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid #f3e9e9;
+}
+.painel-topo h3 {
+  font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--chocolate);
+}
+.painel-topo .fechar {
+  background:#f6eded; border:none; width:36px; height:36px; border-radius:50%;
+  cursor:pointer; font-size:1rem; color:var(--texto); transition:var(--transition);
+}
+.painel-topo .fechar:hover { background:#eedddd; }
+.lista-itens { overflow-y:auto; padding:16px 24px; flex:1; }
+.item-carrinho {
+  display:flex; align-items:center; gap:14px; padding:12px 0;
+  border-bottom:1px solid #f8f1f1;
+}
+.item-carrinho:last-child { border-bottom:none; }
+.item-carrinho .thumb {
+  width:58px; height:58px; border-radius:12px; overflow:hidden; flex-shrink:0;
+  background:var(--rosa);
+}
+.item-carrinho .thumb img { width:100%; height:100%; object-fit:cover; }
+.item-carrinho .info-item { flex:1; min-width:0; }
+.item-carrinho .info-item h4 { font-size:.9rem; font-weight:600; color:var(--chocolate); }
+.item-carrinho .info-item .preco-unit { font-size:.78rem; color:#9a8686; }
+.item-carrinho .qtd { display:flex; align-items:center; gap:10px; }
+.item-carrinho .qtd button {
+  width:28px; height:28px; border-radius:50%; border:1px solid var(--dourado);
+  background:#fff; color:var(--dourado-escuro); cursor:pointer; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center; transition:var(--transition);
+}
+.item-carrinho .qtd button:hover { background:var(--dourado); color:#fff; }
+.item-carrinho .qtd span { font-weight:600; min-width:18px; text-align:center; }
+.item-carrinho .lixeira {
+  background:none; border:none; color:#d3a5a5; cursor:pointer; font-size:1rem;
+  padding:6px; transition:var(--transition);
+}
+.item-carrinho .lixeira:hover { color:#c0392b; }
+
+.carrinho-vazio { text-align:center; padding:40px 20px; color:#b59a9a; }
+.carrinho-vazio i { font-size:2.6rem; margin-bottom:14px; opacity:.5; }
+
+.painel-rodape { padding:16px 24px 24px; border-top:1px solid #f3e9e9; }
+.total-linha {
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
+}
+.total-linha span { font-size:.9rem; color:#8a7373; }
+.total-linha strong {
+  font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--chocolate);
+}
+.btn-whats {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width:100%; background:#25D366; color:#fff; text-decoration:none;
+  padding:15px; border-radius:14px; font-weight:600; font-size:1rem;
+  box-shadow:0 6px 20px rgba(37,211,102,.35); transition:var(--transition);
+}
+.btn-whats:hover { background:#1fb857; transform:translateY(-2px); }
+.btn-whats i { font-size:1.3rem; }
+.observacao {
+  width:100%; margin-top:12px; padding:12px 14px; border:1px solid #eadddd;
+  border-radius:10px; font-family:'Poppins'; font-size:.85rem; resize:none;
+  outline:none; transition:var(--transition);
+}
+.observacao:focus { border-color:var(--dourado); }
+
+/* ===== TOAST ===== */
+.toast {
+  position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--chocolate); color:#fff; padding:12px 26px; border-radius:50px;
+  font-size:.88rem; z-index:400; opacity:0; pointer-events:none;
+  transition:all .35s ease; box-shadow:0 6px 24px rgba(0,0,0,.25);
+  display:flex; align-items:center; gap:8px;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast i { color:#7ddba3; }
+
+/* ===== RODAPÉ ===== */
+footer {
+  text-align:center; padding:40px 20px 110px; color:#b59a9a; font-size:.82rem;
+}
+footer .script { font-family:'Great Vibes',cursive; font-size:1.8rem; color:var(--rosa-forte); margin-bottom:8px; }
+footer .social { display:flex; gap:20px; justify-content:center; margin:18px 0; }
+footer .social a {
+  color:var(--dourado-escuro); font-size:1.3rem; transition:var(--transition);
+}
+footer .social a:hover { color:var(--rosa-forte); transform:translateY(-3px); }
+
+/* ===== SEÇÃO SOBRE ===== */
+.sobre-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;
+}
+.sobre-grid .foto-sobre {
+  border-radius:20px; overflow:hidden; box-shadow:var(--sombra); height:340px;
+  background:var(--rosa);
+}
+.sobre-grid .foto-sobre img { width:100%; height:100%; object-fit:cover; }
+.sobre-grid .texto-sobre .script { font-family:'Great Vibes',cursive; font-size:2.4rem; color:var(--rosa-forte); }
+.sobre-grid .texto-sobre h2 {
+  font-family:'Playfair Display',serif; color:var(--chocolate); font-size:1.6rem; margin:4px 0 16px;
+}
+.sobre-grid .texto-sobre p { font-weight:300; font-size:.95rem; line-height:1.8; color:#7a6464; }
+@media (max-width:720px) {
+  .sobre-grid { grid-template-columns:1fr; }
+  .hero { min-height:78vh; }
+}
+
+/* ===== MONTE SEU BOLO — CHAMADA ===== */
+.monte-bolo {
+  display:grid; grid-template-columns:210px 1fr; gap:0;
+  background:var(--branco); border-radius:18px; overflow:hidden;
+  box-shadow:0 8px 30px rgba(74,44,42,.13); margin-bottom:44px;
+  border:1px solid rgba(201,169,110,.4);
+}
+.monte-bolo .mb-foto { background:var(--rosa); min-height:180px; position:relative; }
+.monte-bolo .mb-foto img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+.monte-bolo .mb-texto { padding:24px 26px; }
+.monte-bolo .mb-selo {
+  display:inline-block; background:var(--rosa-forte); color:#fff; font-size:.66rem;
+  font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 12px; border-radius:50px; margin-bottom:10px;
+}
+.monte-bolo h3 {
+  font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--chocolate); margin-bottom:6px;
+}
+.monte-bolo p { font-size:.85rem; color:#8a7373; font-weight:300; line-height:1.6; }
+.btn-montar {
+  display:inline-flex; align-items:center; gap:9px; margin-top:16px;
+  background:var(--dourado); color:#fff; border:none; cursor:pointer;
+  padding:12px 26px; border-radius:50px; font-weight:600; font-size:.9rem;
+  box-shadow:0 5px 18px rgba(201,169,110,.4); transition:var(--transition);
+}
+.btn-montar:hover { background:var(--dourado-escuro); transform:translateY(-2px); }
+@media (max-width:640px) {
+  .monte-bolo { grid-template-columns:1fr; }
+  .monte-bolo .mb-foto { height:170px; min-height:0; }
+  .monte-bolo .mb-texto { padding:20px 22px 24px; }
+}
+
+/* ===== MONTE SEU BOLO — CONSTRUTOR ===== */
+.painel-bolo {
+  position:fixed; inset:0; z-index:320; background:var(--creme);
+  display:none; flex-direction:column;
+}
+.painel-bolo.aberto { display:flex; }
+.pb-topo {
+  background:var(--branco); border-bottom:1px solid #f3e9e9; padding:16px 20px;
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.pb-topo h3 { font-family:'Playfair Display',serif; font-size:1.25rem; color:var(--chocolate); }
+.pb-topo button {
+  background:#f6eded; border:none; width:38px; height:38px; border-radius:50%;
+  cursor:pointer; font-size:1.05rem; color:var(--texto);
+}
+.pb-corpo { flex:1; overflow-y:auto; padding:22px 20px; width:100%; max-width:720px; margin:0 auto; }
+.pb-intro { font-size:.86rem; color:#8a7373; font-weight:300; line-height:1.7; margin-bottom:26px; }
+.pb-intro strong { color:var(--chocolate); font-weight:600; }
+
+.etapa { margin-bottom:28px; }
+.etapa-cab { display:flex; align-items:baseline; gap:9px; margin-bottom:4px; }
+.etapa-cab .num {
+  background:var(--dourado); color:#fff; font-size:.72rem; font-weight:700;
+  width:22px; height:22px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+.etapa-cab h4 {
+  font-family:'Playfair Display',serif; font-size:1.08rem; color:var(--chocolate);
+  flex:1;
+}
+.etapa-cab .obrig {
+  font-size:.62rem; font-weight:700; color:var(--rosa-forte);
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.etapa .dica { font-size:.78rem; color:#a89191; font-weight:300; margin:0 0 12px 31px; }
+
+.opcao {
+  display:flex; align-items:center; gap:13px; padding:14px 16px;
+  background:var(--branco); border:2px solid var(--borda); border-radius:12px;
+  cursor:pointer; margin-bottom:8px; transition:var(--transition);
+}
+.opcao:hover { border-color:rgba(201,169,110,.55); }
+.opcao.sel { border-color:var(--dourado); background:#fffdf9; }
+.opcao .marca {
+  width:22px; height:22px; border-radius:50%; border:2px solid #e0d0d0;
+  flex-shrink:0; transition:var(--transition); position:relative;
+}
+.opcao.sel .marca { border-color:var(--dourado); background:var(--dourado); }
+.opcao.sel .marca::after {
+  content:'✓'; position:absolute; inset:0; color:#fff; font-size:.72rem;
+  display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+.opcao .rotulo { flex:1; }
+.opcao .rotulo .nome { font-size:.92rem; font-weight:500; color:var(--chocolate); }
+.opcao .rotulo .sub { font-size:.76rem; color:#a89191; font-weight:300; margin-top:2px; }
+.opcao .valor { font-size:.85rem; font-weight:600; color:var(--dourado-escuro); white-space:nowrap; }
+.opcao.bloqueada { opacity:.42; cursor:not-allowed; }
+
+.campo-bolo { width:100%; padding:14px 16px; border:2px solid var(--borda); border-radius:12px;
+  background:var(--branco); font-size:.92rem; outline:none; transition:var(--transition); }
+.campo-bolo:focus { border-color:var(--dourado); }
+
+.aviso-prazo {
+  background:#fff6e8; border:1px solid #f0dcb8; border-radius:12px; padding:13px 16px;
+  font-size:.8rem; color:#8a6d3b; line-height:1.6; margin-bottom:26px;
+}
+.aviso-prazo i { margin-right:6px; }
+
+.pb-rodape {
+  background:var(--branco); border-top:1px solid #f3e9e9; padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  flex-shrink:0;
+}
+.pb-total {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:11px;
+  max-width:720px; margin-left:auto; margin-right:auto;
+}
+.pb-total .rot { font-size:.8rem; color:#8a7373; }
+.pb-total strong { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--chocolate); }
+.btn-add-bolo {
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  width:100%; max-width:720px; margin:0 auto; background:var(--chocolate); color:#fff;
+  border:none; cursor:pointer; padding:15px; border-radius:14px; font-weight:600;
+  font-size:1rem; transition:var(--transition);
+}
+.btn-add-bolo:hover { background:#3a2220; }
+.btn-add-bolo:disabled { opacity:.45; cursor:not-allowed; }
+
+.pb-resumo { font-size:.8rem; color:#8a7373; font-weight:300; line-height:1.7; margin-bottom:8px; }
+.item-carrinho .detalhes { font-size:.72rem; color:#a89191; font-weight:300; line-height:1.5; margin-top:3px; }
+
+/* ===== ESTADOS ===== */
+.carregando { text-align:center; padding:60px 20px; color:#b59a9a; font-weight:300; }
+.escondido { display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- AVISO -->
+<div class="aviso escondido" id="aviso"><i class="fa-solid fa-circle-info"></i><span id="avisoTexto"></span></div>
+
+<!-- HEADER FIXO -->
+<header class="topbar" id="topbar">
+  <div class="logo" id="logoTopo">Cardápio</div>
+  <div class="icons">
+    <span class="icone-btn" onclick="abrirCarrinho()">
+      <i class="fa-solid fa-basket-shopping"></i>
+      <span class="badge" id="badgeTopo" style="display:none;">0</span>
+    </span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero" id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-logo" id="heroLogo"><img id="heroLogoImg" alt=""></div>
+  <div class="hero-content">
+    <div class="script" id="heroNome">Cardápio</div>
+    <h1 id="heroSlogan">Confeitaria Artesanal</h1>
+    <div class="divisor"></div>
+    <p class="sub" id="heroDesc"></p>
+    <a href="#cardapio" class="btn-scroll">Ver o Cardápio <i class="fa-solid fa-chevron-down"></i></a>
+  </div>
+</div>
+
+<!-- CARDÁPIO -->
+<section id="cardapio">
+  <div class="titulo-secao">
+    <div class="script">Nossos doces</div>
+    <h2>Cardápio</h2>
+    <p>Toque no + para adicionar ao seu pedido</p>
+  </div>
+
+  <!-- MONTE SEU BOLO -->
+  <div class="monte-bolo escondido" id="monteBolo">
+    <div class="mb-foto"><img id="mbFoto" src="" alt="Monte seu bolo"></div>
+    <div class="mb-texto">
+      <span class="mb-selo">Novidade</span>
+      <h3 id="mbTitulo">Monte seu Bolo</h3>
+      <p id="mbSub"></p>
+      <button class="btn-montar" onclick="abrirBolo()">
+        <i class="fa-solid fa-cake-candles"></i> Montar meu bolo
+      </button>
+    </div>
+  </div>
+
+  <div class="categorias" id="categorias"></div>
+  <div class="grid-doces" id="gridDoces"></div>
+  <div class="carregando" id="carregando"><i class="fa-solid fa-spinner fa-spin"></i> Carregando o cardápio…</div>
+</section>
+
+<!-- SOBRE -->
+<section id="secaoSobre" class="escondido">
+  <div class="sobre-grid">
+    <div class="foto-sobre"><img id="sobreImg" src="" alt="Nossa confeitaria"></div>
+    <div class="texto-sobre">
+      <div class="script" id="sobreScript"></div>
+      <h2 id="sobreTitulo"></h2>
+      <div id="sobreTexto"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="script" id="rodapeNome"></div>
+  <p id="rodapeTexto"></p>
+  <div class="social" id="rodapeSocial"></div>
+  <p style="margin-top:10px;" id="rodapeCopyright"></p>
+</footer>
+
+<!-- BOTÃO CARRINHO FLUTUANTE -->
+<button class="btn-carrinho escondido" id="btnCarrinho" onclick="abrirCarrinho()">
+  <i class="fa-solid fa-basket-shopping"></i>
+  <span class="badge" id="badgeFloat" style="display:none;">0</span>
+</button>
+
+<!-- OVERLAY CARRINHO -->
+<div class="overlay" id="overlay" onclick="fecharCarrinho()"></div>
+<div class="painel-carrinho" id="painelCarrinho">
+  <div class="painel-topo">
+    <h3>Seu pedido</h3>
+    <button class="fechar" onclick="fecharCarrinho()">✕</button>
+  </div>
+  <div class="lista-itens" id="listaItens"></div>
+  <div class="painel-rodape" id="painelRodape" style="display:none;">
+    <div class="total-linha">
+      <span>Total</span>
+      <strong id="totalGeral">R$ 0,00</strong>
+    </div>
+    <textarea class="observacao" id="obsPedido" rows="2" placeholder="Alguma observação? (ex: embalar para presente)"></textarea>
+    <a href="#" class="btn-whats" id="btnWhats" onclick="finalizarPedido(event)">
+      <i class="fa-brands fa-whatsapp"></i> Finalizar pedido no WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- MONTE SEU BOLO — CONSTRUTOR -->
+<div class="painel-bolo" id="painelBolo">
+  <div class="pb-topo">
+    <h3 id="pbTitulo">Monte seu Bolo</h3>
+    <button onclick="fecharBolo()" aria-label="Fechar">✕</button>
+  </div>
+  <div class="pb-corpo" id="pbCorpo"></div>
+  <div class="pb-rodape">
+    <div class="pb-total">
+      <span class="rot">Total do bolo</span>
+      <strong id="pbTotal">R$ 0,00</strong>
+    </div>
+    <button class="btn-add-bolo" id="pbAdd" onclick="adicionarBolo()">
+      <i class="fa-solid fa-basket-shopping"></i> Adicionar ao pedido
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg"></span></div>
+
+<script>
+// ===================== ESTADO =====================
+let MENU = { config:{}, categorias:[], produtos:[] };
+let carrinho = [];
+let catAtiva = 'todos';
+const CHAVE_CACHE = 'cardapio_cache_v1';
+const CHAVE_CARRINHO = 'carrinho_doces';
+
+// ===================== UTILIDADES =====================
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function preco(v) {
+  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
+}
+function soDigitos(s) { return String(s || '').replace(/\D/g, ''); }
+function linkWhats() {
+  const n = soDigitos(MENU.config.whatsapp);
+  return n ? 'https://wa.me/' + n : '';
+}
+
+// ===================== CARREGAMENTO =====================
+async function carregarMenu() {
+  try {
+    const r = await fetch('/api/menu', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const dados = await r.json();
+    if (!dados || !Array.isArray(dados.produtos)) throw new Error('formato inesperado');
+    MENU = dados;
+    try { localStorage.setItem(CHAVE_CACHE, JSON.stringify(dados)); } catch (e) {}
+    return true;
+  } catch (e) {
+    // Plano B: ultimo cardapio conhecido. Site de cliente nao pode abrir vazio.
+    try {
+      const cache = JSON.parse(localStorage.getItem(CHAVE_CACHE) || 'null');
+      if (cache && Array.isArray(cache.produtos) && cache.produtos.length) {
+        MENU = cache;
+        return true;
+      }
+    } catch (e2) {}
+    return false;
+  }
+}
+
+// ===================== CORES DO SITE =====================
+// Quatro cores escolhidas no painel geram a paleta inteira do site. Os tons
+// derivados (mais escuro, mais claro, sombra) são calculados aqui para o
+// cliente não ter que acertar cada um na mão.
+function corRgb(h) {
+  return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+}
+
+function corHex(r, g, b) {
+  return '#' + [r, g, b].map(function (v) {
+    return Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
+  }).join('');
+}
+
+// Mistura "a" com "b" (0 = só a, 1 = só b).
+function corMisturar(a, b, q) {
+  const A = corRgb(a), B = corRgb(b);
+  return corHex(A[0] + (B[0] - A[0]) * q, A[1] + (B[1] - A[1]) * q, A[2] + (B[2] - A[2]) * q);
+}
+
+function corEscurecer(h, q) { return corMisturar(h, '#000000', q); }
+function corValida(h) { return typeof h === 'string' && /^#[0-9a-f]{6}$/i.test(h.trim()); }
+
+function aplicarCores(c) {
+  const d = corValida(c.corDestaque) ? c.corDestaque.trim() : '#c9a96e';
+  const t = corValida(c.corTitulos) ? c.corTitulos.trim() : '#4a2c2a';
+  const de = corValida(c.corDetalhes) ? c.corDetalhes.trim() : '#d98a9e';
+  const f = corValida(c.corFundo) ? c.corFundo.trim() : '#fdf8f3';
+
+  const rgb = corRgb(t).join(',');
+  const raiz = document.documentElement.style;
+  raiz.setProperty('--dourado', d);
+  raiz.setProperty('--dourado-escuro', corEscurecer(d, 0.26));
+  raiz.setProperty('--chocolate', t);
+  raiz.setProperty('--rosa-forte', de);
+  raiz.setProperty('--creme', f);
+  raiz.setProperty('--rosa', corMisturar(de, '#ffffff', 0.9));
+  raiz.setProperty('--borda', corMisturar(de, '#ffffff', 0.82));
+  raiz.setProperty('--texto', corMisturar(t, '#ffffff', 0.22));
+  raiz.setProperty('--sombra', '0 4px 20px rgba(' + rgb + ',0.10)');
+  raiz.setProperty('--hero-sombra-1', 'rgba(' + rgb + ',0.25)');
+  raiz.setProperty('--hero-sombra-2', 'rgba(' + rgb + ',0.45)');
+}
+
+// ===================== APLICAR CONFIG =====================
+function aplicarConfig() {
+  const c = MENU.config || {};
+  const nome = c.nome || 'Cardápio';
+
+  aplicarCores(c);
+
+  document.title = nome + (c.slogan ? ' — ' + c.slogan : '');
+  const md = document.querySelector('meta[name="description"]');
+  if (md && c.descricao) md.setAttribute('content', c.descricao);
+
+  const heroBg = document.getElementById('heroBg');
+  const heroEl = document.getElementById('hero');
+  // "logo" mostra a imagem inteira, sem escurecer (para marcas com moldura);
+  // "inteira" mostra a foto toda com fundo; "preencher" cobre a área e corta.
+  const modo = c.capaAjuste === 'logo' ? 'logo'
+             : (c.capaAjuste === 'inteira' ? 'inteira' : 'preencher');
+  if (heroEl) heroEl.classList.toggle('modo-logo', modo === 'logo');
+
+  if (c.heroImg) {
+    const src = c.heroImg.replace(/"/g, '');
+    if (modo === 'logo') {
+      const img = document.getElementById('heroLogoImg');
+      if (img) { img.src = src; img.alt = nome; }
+    } else {
+      heroBg.style.backgroundImage = 'url("' + src + '")';
+      heroBg.style.backgroundSize = modo === 'inteira' ? 'contain' : 'cover';
+      heroBg.style.backgroundRepeat = 'no-repeat';
+      heroBg.style.backgroundPosition = 'center';
+    }
+  }
+  document.getElementById('heroNome').textContent = nome;
+  document.getElementById('heroSlogan').textContent = c.slogan || '';
+  document.getElementById('heroDesc').textContent = c.descricao || '';
+  document.getElementById('logoTopo').textContent = nome;
+
+  if (c.aviso && c.aviso.trim()) {
+    document.getElementById('avisoTexto').textContent = c.aviso;
+    document.getElementById('aviso').classList.remove('escondido');
+  }
+
+  // Sobre
+  const temSobre = (c.sobreTexto && c.sobreTexto.trim()) || (c.sobreImg && c.sobreImg.trim());
+  if (temSobre) {
+    document.getElementById('sobreScript').textContent = c.sobreScript || '';
+    document.getElementById('sobreTitulo').textContent = c.sobreTitulo || '';
+    if (c.sobreImg) document.getElementById('sobreImg').src = c.sobreImg;
+    else document.querySelector('.foto-sobre').classList.add('escondido');
+    document.getElementById('sobreTexto').innerHTML = String(c.sobreTexto || '')
+      .split(/\n{2,}/)
+      .map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; })
+      .join('');
+    document.getElementById('secaoSobre').classList.remove('escondido');
+  }
+
+  // Rodapé
+  document.getElementById('rodapeNome').textContent = nome;
+  document.getElementById('rodapeTexto').textContent = c.rodape || '';
+  const social = [];
+  if (c.instagram) {
+    const ig = String(c.instagram).replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '');
+    social.push('<a href="https://www.instagram.com/' + encodeURIComponent(ig) + '" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>');
+  }
+  if (soDigitos(c.whatsapp)) {
+    social.push('<a href="' + linkWhats() + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>');
+  }
+  document.getElementById('rodapeSocial').innerHTML = social.join('');
+  document.getElementById('rodapeCopyright').textContent =
+    '© ' + new Date().getFullYear() + ' ' + nome + ' — Todos os direitos reservados';
+
+  // Monte seu Bolo
+  const bolo = boloConfig();
+  const cardBolo = document.getElementById('monteBolo');
+  if (bolo) {
+    document.getElementById('mbTitulo').textContent = bolo.titulo || 'Monte seu Bolo';
+    document.getElementById('mbSub').textContent = bolo.subtitulo || '';
+    const foto = bolo.img || c.heroImg || '';
+    const imgEl = document.getElementById('mbFoto');
+    if (foto) imgEl.src = foto;
+    else imgEl.parentElement.classList.add('escondido');
+
+    cardBolo.classList.remove('escondido');
+  } else {
+    cardBolo.classList.add('escondido');
+  }
+}
+
+// ===================== RENDER =====================
+function listaCategorias() {
+  const usadas = MENU.categorias || [];
+  const comProduto = usadas.filter(function (c) {
+    return MENU.produtos.some(function (p) { return p.categoria === c.id; });
+  });
+  return [{ id: 'todos', nome: 'Todos' }].concat(comProduto);
+}
+
+function renderCategorias() {
+  const cats = listaCategorias();
+  if (catAtiva !== 'todos' && !cats.some(function (c) { return c.id === catAtiva; })) catAtiva = 'todos';
+  document.getElementById('categorias').innerHTML = cats.map(function (c) {
+    return '<button class="cat-btn ' + (c.id === catAtiva ? 'ativo' : '') + '" onclick="filtrarCat(\'' +
+      esc(c.id).replace(/'/g, "\\'") + '\')">' + esc(c.nome) + '</button>';
+  }).join('');
+}
+
+function filtrarCat(id) {
+  catAtiva = id;
+  renderCategorias();
+  renderDoces();
+}
+
+function renderDoces() {
+  const grade = document.getElementById('gridDoces');
+  const lista = catAtiva === 'todos'
+    ? MENU.produtos
+    : MENU.produtos.filter(function (p) { return p.categoria === catAtiva; });
+
+  if (!lista.length) {
+    grade.innerHTML = '<div class="carregando">Nenhum doce nesta categoria ainda.</div>';
+    return;
+  }
+  const mostrar = MENU.config.mostrarPrecos !== false;
+  grade.innerHTML = lista.map(function (d) {
+    const idSeguro = esc(d.id);
+    const img = d.img
+      ? '<img src="' + esc(d.img) + '" alt="' + esc(d.nome) + '" loading="lazy">'
+      : '<img src="data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="#f7e4e8"/></svg>') + '" alt="">';
+    return '<div class="card-doce">' +
+      '<div class="foto">' + (d.tag ? '<span class="tag">' + esc(d.tag) + '</span>' : '') + img + '</div>' +
+      '<div class="info">' +
+        '<h3>' + esc(d.nome) + '</h3>' +
+        '<p class="desc">' + esc(d.descricao) + '</p>' +
+        '<div class="rodape">' +
+          (mostrar ? '<div class="preco">' + preco(d.preco) + '<small>' + esc(d.unidade) + '</small></div>' : '<div></div>') +
+          '<button class="btn-add" id="btn-' + idSeguro + '" onclick="adicionar(\'' + idSeguro.replace(/'/g, "\\'") + '\')" aria-label="Adicionar ' + esc(d.nome) + '"><i class="fa-solid fa-plus"></i></button>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+// ===================== CARRINHO =====================
+function salvarCarrinho() {
+  try { localStorage.setItem(CHAVE_CARRINHO, JSON.stringify(carrinho)); } catch (e) {}
+  atualizarBadges();
+}
+
+function carrinhoValido() {
+  // descarta item que saiu do cardapio, e atualiza preco/nome que mudou.
+  // bolo montado pelo cliente nao esta em produtos: preserva como esta.
+  const antes = carrinho.length;
+  carrinho = carrinho.map(function (i) {
+    if (i.personalizado || String(i.id).indexOf('bolo-') === 0) return i;
+    const atual = MENU.produtos.find(function (p) { return p.id === i.id; });
+    if (!atual) return null;
+    return { id: atual.id, nome: atual.nome, preco: atual.preco, unid: atual.unidade, img: atual.img, qtd: i.qtd };
+  }).filter(Boolean);
+  if (carrinho.length !== antes) salvarCarrinho();
+}
+
+function adicionar(id) {
+  const doce = MENU.produtos.find(function (d) { return d.id === id; });
+  if (!doce) return;
+  const existente = carrinho.find(function (i) { return i.id === id; });
+  if (existente) existente.qtd++;
+  else carrinho.push({ id: doce.id, nome: doce.nome, preco: doce.preco, unid: doce.unidade, img: doce.img, qtd: 1 });
+  salvarCarrinho();
+  animarBotao(id);
+  toast(doce.nome + ' adicionado!');
+}
+
+function animarBotao(id) {
+  const btn = document.getElementById('btn-' + id);
+  if (!btn) return;
+  btn.classList.add('added');
+  btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+  setTimeout(function () {
+    btn.classList.remove('added');
+    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+  }, 900);
+}
+
+function mudarQtd(id, delta) {
+  const item = carrinho.find(function (i) { return i.id === id; });
+  if (!item) return;
+  item.qtd += delta;
+  if (item.qtd <= 0) carrinho = carrinho.filter(function (i) { return i.id !== id; });
+  salvarCarrinho();
+  renderCarrinho();
+}
+
+function remover(id) {
+  carrinho = carrinho.filter(function (i) { return i.id !== id; });
+  salvarCarrinho();
+  renderCarrinho();
+}
+
+function atualizarBadges() {
+  const total = carrinho.reduce(function (a, i) { return a + i.qtd; }, 0);
+  ['badgeTopo', 'badgeFloat'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = total;
+    el.style.display = total > 0 ? 'flex' : 'none';
+  });
+  document.getElementById('btnCarrinho').classList.toggle('escondido', total === 0);
+}
+
+function renderCarrinho() {
+  const lista = document.getElementById('listaItens');
+  const rodape = document.getElementById('painelRodape');
+
+  if (!carrinho.length) {
+    lista.innerHTML = '<div class="carrinho-vazio"><i class="fa-solid fa-cookie-bite"></i><p>Seu pedido está vazio.<br>Adicione doces deliciosos!</p></div>';
+    rodape.style.display = 'none';
+    return;
+  }
+  lista.innerHTML = carrinho.map(function (i) {
+    const idSeguro = esc(i.id).replace(/'/g, "\\'");
+    return '<div class="item-carrinho">' +
+      '<div class="thumb">' + (i.img ? '<img src="' + esc(i.img) + '" alt="' + esc(i.nome) + '">' : '') + '</div>' +
+      '<div class="info-item"><h4>' + esc(i.nome) + '</h4>' +
+      '<span class="preco-unit">' + preco(i.preco) + ' / ' + esc(i.unid) + '</span>' +
+      (i.detalhes && i.detalhes.length ? '<div class="detalhes">' + i.detalhes.map(esc).join('<br>') + '</div>' : '') +
+      '</div>' +
+      '<div class="qtd">' +
+        '<button onclick="mudarQtd(\'' + idSeguro + '\', -1)">−</button>' +
+        '<span>' + i.qtd + '</span>' +
+        '<button onclick="mudarQtd(\'' + idSeguro + '\', 1)">+</button>' +
+      '</div>' +
+      '<button class="lixeira" onclick="remover(\'' + idSeguro + '\')"><i class="fa-solid fa-trash-can"></i></button>' +
+    '</div>';
+  }).join('');
+
+  const total = carrinho.reduce(function (a, i) { return a + i.preco * i.qtd; }, 0);
+  document.getElementById('totalGeral').textContent = preco(total);
+  rodape.style.display = 'block';
+}
+
+// ===================== WHATSAPP =====================
+function finalizarPedido(e) {
+  e.preventDefault();
+  if (!carrinho.length) return;
+  const link = linkWhats();
+  if (!link) { toast('WhatsApp não configurado.'); return; }
+
+  const total = carrinho.reduce(function (a, i) { return a + i.preco * i.qtd; }, 0);
+  const obs = document.getElementById('obsPedido').value.trim();
+  const cabecalho = (MENU.config.msgPedido || 'Olá! Gostei do produto:');
+
+  let msg = cabecalho + '\n\n';
+  carrinho.forEach(function (i) {
+    msg += '• ' + i.qtd + 'x ' + i.nome + ' — ' + preco(i.preco * i.qtd) + '\n';
+    if (i.detalhes && i.detalhes.length) {
+      i.detalhes.forEach(function (d) { msg += '    › ' + d + '\n'; });
+    }
+  });
+  if (MENU.config.mostrarPrecos !== false) msg += '\n*Total: ' + preco(total) + '*';
+  if (obs) msg += '\n\nObservação: ' + obs;
+  msg += '\n\nAguardo confirmação! 🍰';
+
+  window.open(link + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ===================== MONTE SEU BOLO =====================
+let escolhasBolo = {};
+
+function boloConfig() {
+  const b = MENU.bolo;
+  if (!b || !b.ativo) return null;
+  if (!Array.isArray(b.etapas) || !b.etapas.length) return null;
+  return b;
+}
+
+function dataMinima() {
+  const b = boloConfig();
+  const dias = b ? (Number(b.prazoDias) || 0) : 0;
+  const d = new Date();
+  d.setDate(d.getDate() + dias);
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return d.getFullYear() + '-' + mm + '-' + dd;
+}
+
+function qtdEscolhida(etapaId) {
+  const sel = escolhasBolo[etapaId];
+  return sel ? Object.keys(sel).filter(function (k) { return sel[k]; }).length : 0;
+}
+
+function abrirBolo() {
+  const b = boloConfig();
+  if (!b) return;
+  escolhasBolo = {};
+  document.getElementById('pbTitulo').textContent = b.titulo || 'Monte seu Bolo';
+  renderBolo();
+  document.getElementById('painelBolo').classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('pbCorpo').scrollTop = 0;
+}
+
+function fecharBolo() {
+  document.getElementById('painelBolo').classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+function escolherBolo(etapaId, opcaoId) {
+  const b = boloConfig();
+  const e = b.etapas.find(function (x) { return x.id === etapaId; });
+  if (!e) return;
+  if (e.tipo === 'unico') {
+    escolhasBolo[etapaId] = {};
+    escolhasBolo[etapaId][opcaoId] = true;
+  } else {
+    if (!escolhasBolo[etapaId]) escolhasBolo[etapaId] = {};
+    const sel = escolhasBolo[etapaId];
+    if (sel[opcaoId]) {
+      delete sel[opcaoId];
+    } else {
+      const max = Math.max(1, Number(e.max) || 1);
+      if (qtdEscolhida(etapaId) >= max) {
+        toast('Você já escolheu ' + max + (max === 1 ? ' opção' : ' opções') + ' aqui.');
+        return;
+      }
+      sel[opcaoId] = true;
+    }
+  }
+  renderBolo();
+}
+
+function textoBolo(etapaId, valor) {
+  escolhasBolo[etapaId] = valor;
+  atualizarTotalBolo();
+}
+
+function renderBolo() {
+  const b = boloConfig();
+  if (!b) return;
+  const partes = [];
+
+  if (b.texto) partes.push('<div class="pb-intro">' + esc(b.texto).replace(/\n/g, '<br>') + '</div>');
+
+  if (Number(b.prazoDias) > 0) {
+    let aviso = 'Escolha a data com ' + b.prazoDias + (b.prazoDias === 1 ? ' dia' : ' dias') + ' de antecedência.';
+    if (b.prazoAviso) aviso += ' ' + b.prazoAviso;
+    partes.push('<div class="aviso-prazo"><i class="fa-solid fa-clock"></i>' + esc(aviso) + '</div>');
+  }
+
+  b.etapas.forEach(function (e, i) {
+    const eid = esc(e.id).replace(/'/g, "\\'");
+    let html = '<div class="etapa">';
+    html += '<div class="etapa-cab"><span class="num">' + (i + 1) + '</span><h4>' + esc(e.titulo) + '</h4>' +
+      (e.obrigatorio ? '<span class="obrig">obrigatório</span>' : '') + '</div>';
+    if (e.ajuda) html += '<div class="dica">' + esc(e.ajuda) + '</div>';
+
+    if (e.tipo === 'texto') {
+      html += '<input class="campo-bolo" type="text" placeholder="' + esc(e.placeholder || '') + '" value="' +
+        esc(escolhasBolo[e.id] || '') + '" oninput="textoBolo(\'' + eid + '\', this.value)">';
+    } else if (e.tipo === 'data') {
+      html += '<input class="campo-bolo" type="date" min="' + dataMinima() + '" value="' +
+        esc(escolhasBolo[e.id] || '') + '" onchange="textoBolo(\'' + eid + '\', this.value)">';
+    } else {
+      const sel = escolhasBolo[e.id] || {};
+      const cheio = e.tipo === 'multiplo' && qtdEscolhida(e.id) >= Math.max(1, Number(e.max) || 1);
+      e.opcoes.forEach(function (o) {
+        const oid = esc(o.id).replace(/'/g, "\\'");
+        const marcada = !!sel[o.id];
+        const bloqueada = cheio && !marcada;
+        html += '<div class="opcao' + (marcada ? ' sel' : '') + (bloqueada ? ' bloqueada' : '') + '"' +
+          ' onclick="escolherBolo(\'' + eid + '\',\'' + oid + '\')">' +
+          '<span class="marca"></span>' +
+          '<span class="rotulo"><span class="nome">' + esc(o.nome) + '</span>' +
+          (o.descricao ? '<span class="sub">' + esc(o.descricao) + '</span>' : '') + '</span>' +
+          (Number(o.preco) ? '<span class="valor">+ ' + preco(o.preco) + '</span>' : '') +
+        '</div>';
+      });
+    }
+    html += '</div>';
+    partes.push(html);
+  });
+
+  document.getElementById('pbCorpo').innerHTML = partes.join('');
+  atualizarTotalBolo();
+}
+
+function valorBolo() {
+  const b = boloConfig();
+  if (!b) return 0;
+  let total = Number(b.precoBase) || 0;
+  b.etapas.forEach(function (e) {
+    const sel = escolhasBolo[e.id];
+    if (!sel || typeof sel !== 'object') return;
+    e.opcoes.forEach(function (o) { if (sel[o.id]) total += Number(o.preco) || 0; });
+  });
+  return total;
+}
+
+function atualizarTotalBolo() {
+  document.getElementById('pbTotal').textContent = preco(valorBolo());
+}
+
+function resumoBolo() {
+  const b = boloConfig();
+  const linhas = [];
+  if (!b) return linhas;
+  b.etapas.forEach(function (e) {
+    const sel = escolhasBolo[e.id];
+    if (sel == null) return;
+    if (e.tipo === 'unico' || e.tipo === 'multiplo') {
+      const nomes = e.opcoes.filter(function (o) { return sel[o.id]; }).map(function (o) { return o.nome; });
+      if (nomes.length) linhas.push(e.titulo.replace(/[:?]\s*$/, '') + ': ' + nomes.join(' + '));
+    } else {
+      const v = String(sel).trim();
+      if (!v) return;
+      if (e.tipo === 'data') {
+        const p = v.split('-');
+        linhas.push(e.titulo + ': ' + (p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : v));
+      } else {
+        linhas.push(e.titulo + ': ' + v);
+      }
+    }
+  });
+  return linhas;
+}
+
+function hashSimples(txt) {
+  let h = 0;
+  for (let i = 0; i < txt.length; i++) {
+    h = ((h << 5) - h + txt.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h).toString(36);
+}
+
+function adicionarBolo() {
+  const b = boloConfig();
+  if (!b) return;
+
+  for (let i = 0; i < b.etapas.length; i++) {
+    const e = b.etapas[i];
+    if (!e.obrigatorio) continue;
+    const sel = escolhasBolo[e.id];
+    if (e.tipo === 'unico' || e.tipo === 'multiplo') {
+      if (!sel || !qtdEscolhida(e.id)) { toast('Escolha: ' + e.titulo); return; }
+    } else if (!String(sel || '').trim()) {
+      toast('Preencha: ' + e.titulo);
+      return;
+    }
+  }
+
+  const etapaData = b.etapas.find(function (e) { return e.tipo === 'data' && escolhasBolo[e.id]; });
+  if (etapaData && escolhasBolo[etapaData.id] < dataMinima()) {
+    toast('A data precisa ser a partir de ' + dataMinima().split('-').reverse().join('/') + '.');
+    return;
+  }
+
+  const detalhes = resumoBolo();
+  const total = valorBolo();
+  const chave = 'bolo-' + hashSimples(detalhes.join('|'));
+  const existente = carrinho.find(function (i) { return i.id === chave; });
+
+  if (existente) {
+    existente.qtd++;
+  } else {
+    carrinho.push({
+      id: chave,
+      nome: b.titulo || 'Bolo personalizado',
+      preco: total,
+      unid: 'bolo',
+      img: b.img || '',
+      qtd: 1,
+      detalhes: detalhes,
+      personalizado: true,
+    });
+  }
+
+  salvarCarrinho();
+  fecharBolo();
+  toast('Bolo adicionado ao pedido!');
+}
+
+// ===================== PAINEL =====================
+function abrirCarrinho() {
+  renderCarrinho();
+  document.getElementById('overlay').classList.add('aberto');
+  document.getElementById('painelCarrinho').classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+function fecharCarrinho() {
+  document.getElementById('overlay').classList.remove('aberto');
+  document.getElementById('painelCarrinho').classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+// ===================== TOAST =====================
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2200);
+}
+
+// ===================== TOPBAR AO ROLAR =====================
+window.addEventListener('scroll', function () {
+  document.getElementById('topbar').classList.toggle('show', window.scrollY > 300);
+});
+
+// ===================== INIT =====================
+(async function iniciar() {
+  try {
+    carrinho = JSON.parse(localStorage.getItem(CHAVE_CARRINHO) || '[]');
+    if (!Array.isArray(carrinho)) carrinho = [];
+  } catch (e) { carrinho = []; }
+
+  const ok = await carregarMenu();
+  document.getElementById('carregando').classList.add('escondido');
+
+  if (!ok) {
+    document.getElementById('gridDoces').innerHTML =
+      '<div class="carregando">Não foi possível carregar o cardápio agora.<br>Recarregue a página em instantes.</div>';
+    return;
+  }
+  aplicarConfig();
+  carrinhoValido();
+  renderCategorias();
+  renderDoces();
+  atualizarBadges();
+})();
+</script>
+</body>
+</html>
